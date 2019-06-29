@@ -1,0 +1,68 @@
+version: "3"
+
+services:
+  producer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+     - RABBITMQ_HOST=rabbitmq
+     - CALLBACKMODULE=Producer
+     - INQUEUE=work-done
+     - OUTQUEUE=add-dot-queue
+    depends_on:
+      - rabbitmq
+
+  dot_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+     - RABBITMQ_HOST=rabbitmq
+     - CALLBACKMODULE=AddDotWorker
+     - INQUEUE=add-dot-queue
+     - OUTQUEUE=add-pipe-queue
+    depends_on:
+      - rabbitmq
+
+  pipe_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+     - RABBITMQ_HOST=rabbitmq
+     - CALLBACKMODULE=AddPipeWorker
+     - INQUEUE=add-pipe-queue
+     - OUTQUEUE=add-round-queue
+    depends_on:
+      - rabbitmq
+
+  round_bracket_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+     - RABBITMQ_HOST=rabbitmq
+     - CALLBACKMODULE=RoundBracketWorker
+     - INQUEUE=add-round-queue
+     - OUTQUEUE=add-funky-queue
+    depends_on:
+      - rabbitmq
+
+  funky_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+     - RABBITMQ_HOST=rabbitmq
+     - CALLBACKMODULE=FunkyWorker
+     - INQUEUE=add-funky-queue
+     - OUTQUEUE=work-done
+    depends_on:
+      - rabbitmq
+
+
+  rabbitmq:
+    image: rabbitmq:3.7-alpine
+    ports:
+      - "5672:5672"
