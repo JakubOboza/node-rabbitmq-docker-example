@@ -4,6 +4,6 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "amqplib": "^0.5.3"
+    "amqplib": "^0.10.3"
   }
 }
